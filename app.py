@@ -35,10 +35,10 @@ class Tfstate(db.Model):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
-        if request.form['content'] == '':
+        if request.form['name'] == '':
             return redirect('/')
-        state_content = request.form['content']
-        new_state = Tfstate(name=state_content)
+        state_name = request.form['name']
+        new_state = Tfstate(name=state_name)
         try:
             db.session.add(new_state)
             db.session.commit()
