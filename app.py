@@ -79,6 +79,21 @@ def rename(id):
         return render_template('rename.html', state=state)
 
 
+@app.route('/api/<str:name>', methods=['GET', 'POST'])
+def rename(name):
+    state = Tfstate.query.get_or_404(name)
+
+    if request.method == 'POST':
+        state.name = request.form['name']
+
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was a problem renaming that state'
+    else:
+        return render_template('rename.html', state=state)
+
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port='80')
     # app.run(debug=True)
