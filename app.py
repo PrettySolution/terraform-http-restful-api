@@ -6,6 +6,7 @@ from datetime import datetime
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
+Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -15,7 +16,7 @@ metadata = MetaData()
 tfstate = Table('tfstate', metadata,
                 Column('id', Integer, primary_key=True),
                 Column('name', String),
-                Column('json', Text),
+                Column('state', Text),
                 Column('date_created', DateTime, default=datetime.utcnow())
                 )
 metadata.create_all(engine)
@@ -24,7 +25,7 @@ metadata.create_all(engine)
 class Tfstate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
-    json = db.Column(db.Text, default='{}')
+    state = db.Column(db.Text, default='{}')
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
@@ -36,18 +37,46 @@ def index():
     if request.method == 'POST':
         if request.form['content'] == '':
             return redirect('/')
-        tfstate_content = request.form['content']
-        new_tfstate = Tfstate(name=tfstate_content)
+        state_content = request.form['content']
+        new_state = Tfstate(name=state_content)
         try:
-            db.session.add(new_tfstate)
+            db.session.add(new_state)
             db.session.commit()
             return redirect('/')
         except:
             return 'There was an issue adding your task'
 
     else:
-        tasks = Tfstate.query.order_by(Tfstate.date_created).all()
-        return render_template('index.html', tasks=tasks)
+        states = Tfstate.query.order_by(Tfstate.date_created).all()
+        return render_template('index.html', states=states)
+
+
+@app.route('/delete/<int:id>')
+def delete(id):
+    state_to_delete = Tfstate.query.get_or_404(id)
+
+    try:
+        db.session.delete(state_to_delete)
+        db.session.commit()
+        return redirect('/')
+    except:
+        return 'There was a problem deleting that state'
+
+
+@app.route('/rename/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    state = Tfstate.query.get_or_404(id)
+
+    if request.method == 'POST':
+        state.name = request.form['name']
+
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was an issue deleting your state'
+    else:
+        return render_template('rename.html', state=state)
 
 
 if __name__ == "__main__":

@@ -1,28 +1,30 @@
 {% extends "bootstrap/base.html" %}
 
 
-{% block title %}Tasks Master{% endblock %}
+{% block title %}Terraform State Manager{% endblock %}
 
 {% block body %}
 {% block content %}
 <div class="container">
-    <h1 class="text-center">Task Master</h1>
-    {% if tasks|length < 1 %}
-        <h4 class="text-center">There are no tasks. Create one below!</h4>
+    <h1 class="text-center">Terraform State Manager</h1>
+    {% if states|length < 1 %}
+        <h4 class="text-center">There are no states.</h4>
     {% else %}
         <table class="table table-hover">
             <tr class="active">
-                <th class="text-center">Task</th>
+                <th class="text-center">Name</th>
                 <th class="text-center">Added</th>
+                <th class="text-center">Last activity</th>
                 <th class="text-center">Actions</th>
             </tr>
-            {% for task in tasks %}
+            {% for state in states %}
                 <tr class="text-center">
-                    <td>{{ task.content }}</td>
-                    <td>{{ task.date_created.date() }}</td>
+                    <td>{{ state.name }}</td>
+                    <td>{{ state.date_created.date() }}</td>
+                    <td>-</td>
                     <td>
-                        <a class="btn btn-danger" href="/delete/{{task.id}}">Delete</a>
-                        <a class="btn btn-warning" href="/update/{{task.id}}">Update</a>
+                        <a class="btn btn-danger" href="/delete/{{state.id}}">Delete</a>
+                        <a class="btn btn-warning" href="/rename/{{state.id}}">Rename</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -30,9 +32,9 @@
     {% endif %}
     <form action="/" method="post" class="form-inline text-center">
         <div class="form-group">
-            <input class="form-control" type="text" name="content" id="content" placeholder="Go to the GYM">
+            <input class="form-control" type="text" name="content" id="content" placeholder="terraform.tfstate">
         </div>
-        <input class="btn btn-success" type="submit" value="Add Task">
+        <input class="btn btn-success" type="submit" value="Add State">
     </form>
 </div>
 {% endblock%}
