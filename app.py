@@ -74,11 +74,11 @@ def update(id):
             db.session.commit()
             return redirect('/')
         except:
-            return 'There was an issue deleting your state'
+            return 'There was a problem renaming that state'
     else:
         return render_template('rename.html', state=state)
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, host='0.0.0.0', port='80')
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port='80')
+    # app.run(debug=True)
