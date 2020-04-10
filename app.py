@@ -64,7 +64,7 @@ def delete(id):
 
 
 @app.route('/rename/<int:id>', methods=['GET', 'POST'])
-def update(id):
+def rename(id):
     state = Tfstate.query.get_or_404(id)
 
     if request.method == 'POST':
